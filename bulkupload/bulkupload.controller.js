@@ -353,7 +353,7 @@
 
 		//Kasun_Wijeratne_29_AUG_2017
 		function refreshUploader() {
-			debugger;
+			// debugger;
 			document.getElementById('refreshUploader').click();
 		};
 		$scope.sampleBulkPreview = function () {
