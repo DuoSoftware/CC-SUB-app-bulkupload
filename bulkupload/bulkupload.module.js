@@ -55,7 +55,7 @@
       /*stateParams: {
        'param1': 'page'
        },*/
-      weight   : 9
+      weight   : 11
     });
   }
 
