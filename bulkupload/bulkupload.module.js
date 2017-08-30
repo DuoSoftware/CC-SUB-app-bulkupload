@@ -3,7 +3,7 @@
 // Owner  : Gihan Herath
 // Last changed date : 2017/08/25
 // Version : 6.1.0.1
-// Modified By : Gihan
+// Modified By : Kasun
 /////////////////////////////////
 
 (function ()
@@ -33,11 +33,11 @@
         },
         resolve: {
           security: ['$q','mesentitlement', function($q,mesentitlement){
-            var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
-
-            if(entitledStatesReturn !== true){
-              return $q.reject("unauthorized");
-            };
+            // var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
+			//
+            // if(entitledStatesReturn !== true){
+            //   return $q.reject("unauthorized");
+            // };
           }]
         },
         bodyClass: 'bulkupload'
