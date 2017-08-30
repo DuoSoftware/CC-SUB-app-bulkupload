@@ -49,11 +49,12 @@
                     </div>
                 </div>
                 <div flex fill-width>
-                    <div style="font-size: 12px;color: #b8b8b8;margin-bottom:10px">excel, csv, etc..</div>
                     <lf-ng-md-file-input lf-files="bulkUpload.files" lf-api="blkApi" lf-on-file-click="onFileClick" lf-remove-label="Delete" lf-mimetype='text/csv' accept="text/csv" lf-drag-and-drop-label="Drag and Drop here!" drag preview></lf-ng-md-file-input>
                     <!--<file-up-loader id="uploadbtn"  os-class="testupload" label="Drag a file here or browse for a file to upload" model="content.files" class="md-block" flex-gt-sm>-->
                     <!--</file-up-loader>-->
                 </div>
+                <div class="text-center"><i>Supported files : <b>xlsx(MS Excel), csv</b></i></div>
+
                 <!--<button type="button" onclick="this.blkApi.removeAll()" id="refreshUploader" style="display: none;"></button>-->
 
                 <div layout="row" layout-align="end center" fill-width>
