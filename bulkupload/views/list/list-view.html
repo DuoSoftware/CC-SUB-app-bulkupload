@@ -1,52 +1,402 @@
-<!-- INVOICE LIST ITEMS -->
-<meta name="updatedBy" content="Kasun">
-<meta name="modifiedDate" content="15-02-2017">
-<meta name="version" content="6.0.1.0">
-<meta name="app" content="plans">
-<meta name="view" content="list-view.html">
+<div layout="row" flex fill-height>
+    <form name="bulkUploadForm" ng-submit="submitBulkUpload()" layout="column" layout-align="center center" class="m-5" flex>
+        <div class="cc-accordion mb-5" layout="column" ng-class="{'flex':expandAccordion != 1}">
+            <div class="accordion-head" layout="row" layout-align="center center" ng-click="showAccordionBody(0, false)">
+                <div class="accordion-title" flex>
+                    <span class="num">1</span>
+                    <span>Select type</span>
+                </div>
+                <md-icon md-font-icon="icon-{{step1Done ? 'check' : 'clock'}}" ng-class="{'font-green':step1Done}"></md-icon>
+            </div>
+            <md-content ms-scroll class="accordion-body" ng-if="expandAccordion != 1" layout="column" layout-align="center center" flex>
+                <div class="p-10 text-center">Select what you have in your file that you are about to upload.</div>
+                <div layout="column" layout-align="center center" flex>
+                    <md-input-container>
+                        <md-radio-group name="bulkType" ng-required ng-model="bulkUpload.type" ng-init="bulkUpload.type = 'profile'" layout="row" class="cc-switch-buttons-group">
+                            <md-radio-button value="profile" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'profile'" ng-style="bulkUpload.type == 'subscription' ? {'z-index':'1'} : {'z-index':'0'}">Profiles</md-radio-button>
+                            <md-radio-button value="subscription" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'subscription'" ng-style="bulkUpload.type == 'profile' ? {'z-index':'1'} : {'z-index':'0'}">Subscriptions</md-radio-button>
+                        </md-radio-group>
+                        <!--<label>Type</label>-->
+                        <!--<md-select ng-required="true" flex ng-model="bulkUpload.type">-->
+                            <!--<md-option value="profile">Profile</md-option>-->
+                            <!--<md-option value="subscription">Subscription</md-option>-->
+                        <!--</md-select>-->
+                    </md-input-container>
+                </div>
+                <div flex></div>
+                <div layout="row" layout-align="end center" fill-width>
+                    <md-button class="md-accent" ng-click="showAccordionBody(1, true)">Next <md-icon md-font-icon="icon-chevron-down" class="fs-12"></md-icon> </md-button>
+                </div>
+            </md-content>
+        </div>
+        <div class="cc-accordion" layout="column" ng-class="{'flex':expandAccordion == 1 && isUploaderVisited}">
+            <div class="accordion-head" layout="row" layout-align="center center" ng-click="showAccordionBody(1, false)">
+                <div class="accordion-title" flex>
+                    <span class="num">2</span>
+                    <span>Select files & upload</span>
+                </div>
+                <md-icon md-font-icon="icon-{{uploadDone ? 'check' : 'clock'}}" ng-class="{'font-green':uploadDone}"></md-icon>
+            </div>
+            <md-content ng-if="expandAccordion == 1 && isUploaderVisited" ms-scroll class="accordion-body md-padding" layout="column" layout-align="center center" flex>
+                <div layout="column" layout-align="center center" class="pos-abs animate-fade-in-out bg-white" fill-width fill-height style="z-index:10" ng-if="uploadDone">
+                    <div class="text-center">
+                        <md-icon md-font-icon="icon-{{uploadDoneMessage == 'Uploading success' ? 'check-circle' : 'information-circle'}}" class="fs-50 w-50 h-50 line-height-50 op-5"></md-icon>
+                        <h2 class="text-center op-5">{{uploadDoneMessage}}!</h2>
+                    </div>
+                    <div layout="row" layout-align="center center" class="mt-40">
+                        <md-button class="md-accent" ng-click="resetUploader('reupload')"><md-icon md-font-icon="icon-chevron-left"></md-icon> Upload another</md-button>
+                        <md-button class="md-accent" ng-click="resetUploader('reset')"><md-icon md-font-icon="icon-refresh"></md-icon> Start over</md-button>
+                    </div>
+                </div>
+                <div flex fill-width>
+                    <div style="font-size: 12px;color: #b8b8b8;margin-bottom:10px">excel, csv, etc..</div>
+                    <lf-ng-md-file-input lf-files="bulkUpload.files" lf-api="blkApi" lf-on-file-click="onFileClick" lf-remove-label="Delete" lf-mimetype='text/csv' accept="text/csv" lf-drag-and-drop-label="Drag and Drop here!" drag preview></lf-ng-md-file-input>
+                    <!--<file-up-loader id="uploadbtn"  os-class="testupload" label="Drag a file here or browse for a file to upload" model="content.files" class="md-block" flex-gt-sm>-->
+                    <!--</file-up-loader>-->
+                </div>
+                <!--<button type="button" onclick="this.blkApi.removeAll()" id="refreshUploader" style="display: none;"></button>-->
 
-<div class="main-list-preloader animate-fade-in-out" layout="row" layout-sm="column" layout-align="space-around" ng-hide="!isLoading">
-  <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                <div layout="row" layout-align="end center" fill-width>
+                    <!--<md-button ng-click="clearform()">Clear</md-button>-->
+                    <md-progress-circular ng-if="vm.submitted"></md-progress-circular>
+                    <md-button ng-disabled="vm.submitted" type="submit" class="m-0 md-raised md-accent"><md-icon md-font-icon="icon-cloud-upload" class="mr-10"></md-icon> Upload</md-button>
+                </div>
+            </md-content>
+        </div>
+    </form>
+    <div layout="column" layout-align="start center" class="md-padding bl b-light light-gray w-300">
+        <div layout="column" class="pr-20pos-rel light-gray" style="z-index:1;">
+            <span flex>Refer the sample to get an idea of the format of the uploading document.</span>
+        </div>
+        <div layout="column" layout-align="center center" class="pos-rel" style="z-index:1;background: #fafafa;" fill-width flex>
+            <div class="text-center fs-12 mb-10 op-5">Sample document</div>
+            <md-button ng-model="bulkSampleCsv" md-whiteframe="1dp" layout="column" layout-align="start center" class="bg-white w-100 h-100 m-0 attachment text-center" ng-click="openItemUrl(bulkSampleCsv[0])" readonly="true">
+                <md-icon class="w-60 h-65 fs-50 md-accent" md-font-icon="icon-file-document-box"></md-icon>
+                <div flex>
+                    <div>{{bulkSampleCsv[0].split('/').pop()}}</div>
+                </div>
+            </md-button>
+            <md-icon ng-click="sampleBulkPreview()" md-font-icon="icon-{{showSampleBulkPreview ? 'eye-off' : 'eye'}}" class="font-accent mv-10 fs-20"><md-tooltip>Preview</md-tooltip></md-icon>
+        </div>
+        <div class="pos-rel" style="z-index:0;" ng-class="{'flex':showSampleBulkPreview}">
+            <div md-whiteframe="1dp" class="animate-slide-down p-10 mt-10 bg-white" ng-if="showSampleBulkPreview"><img src="assets/images/cc_bulk_preview.jpg" alt=""></div>
+        </div>
+        <div class="mt-20">
+            <span class="font-accent"><md-icon class="fs-16 w-15 h-15 line-height-14 font-accent" md-font-icon="icon-information-outline"></md-icon> IMPORTANT</span> <span class="op-5"><i>The document you are about to upload has to follow the <b>exact</b> format the sample gives.</br> Invalid formats will be rejected.</i></span>
+        </div>
+    </div>
+    <!--<div class="content-wrapper" flex>-->
+        <!--<md-content class="overflow-hidden pb-50" id="createPlanContent" ng-style="vm.activePlanPaneIndex == 1 ? {'height':vm.planContentHeight} : null" ms-scroll>-->
+            <!--&lt;!&ndash;<form name="form">&ndash;&gt;-->
+            <!--&lt;!&ndash;Single Image with validations&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="button" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"&ndash;&gt;-->
+            <!--&lt;!&ndash;ngf-accept="'image/*'" ngf-max-size="20MB" ngf-min-height="100"&ndash;&gt;-->
+            <!--&lt;!&ndash;ngf-resize="{width: 100, height: 100}">Select</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;Multiple files&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="button" ngf-select ng-model="files" ngf-multiple="true">Select</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;Drop files: <div ngf-drop ng-model="files" class="drop-box">Drop</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<button type="submit" ng-click="submit()">submit</button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</form>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div class="button" ngf-select="upload($file)">Upload on file select</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="button" ngf-select="uploadFiles($files)" multiple="multiple">Upload on file select</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;Drop File:&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ngf-drop="uploadFiles($files)" class="drop-box"&ndash;&gt;-->
+            <!--&lt;!&ndash;ngf-drag-over-class="'dragover'" ngf-multiple="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;ngf-pattern="'.xls,.csv,.xlsx'" accept=".xls,.csv,.xlsx">Drop Images or PDFs files here</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;Image thumbnail: <img ngf-thumbnail="file || '/thumb.jpg'">&ndash;&gt;-->
+            <!--&lt;!&ndash;Audio preview: <audio controls ngf-src="file"></audio>&ndash;&gt;-->
+            <!--&lt;!&ndash;Video preview: <video controls ngf-src="file"></video>&ndash;&gt;-->
+
+
+            <!--<div layout="row">-->
+                <!--<h3><b>Sample Bulk Upload Formats</b></h3>-->
+            <!--</div>-->
+            <!--<div layout="row" class="mt-20">-->
+                <!--<div layout="row" layout-align="start center" class="info-grid-row" flex>-->
+                    <!--<md-chips  id="pdfChip" ng-model="bulkSampleCsv" style="margin-left:-5px;"  readonly="true"  ng-disabled="true" >-->
+                        <!--<md-chip-template ng-click="openItemUrl($chip)">-->
+                            <!--<div layout="row">-->
+                                <!--<div layout="column" flex="10">-->
+                                    <!--<img src="\assets\images\Preview-icon.png" style="padding-top: 3px;height: 25px;width:22px"/>-->
+                                <!--</div>-->
+                                <!--<div layout="column" flex="10"></div>-->
+                                <!--<div layout="column" flex="70">-->
+                          <!--<span style="width: 225px;">-->
+                              <!--<strong class="font-Lato font-size14" ng-if="$chip.split('/')[$chip.split('/').length-1].length < 25">{{$chip.split('/')[$chip.split('/').length-1]}}</strong>-->
+                              <!--<strong class="font-Lato font-size14" ng-if="$chip.split('/')[$chip.split('/').length-1].length >= 25">{{$chip.split('/')[$chip.split('/').length-1].substr(0,24)}}..</strong>-->
+
+                          <!--</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</md-chip-template>-->
+                    <!--</md-chips>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;<form id="changePlanForm" name="vm.changePlanForm" ng-submit="submitPlan('changePlanForm')" novalidate>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;CREATE NEW INVOICE _ CARDED=================================================&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card flex class="input-block-gen">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-cog"></md-icon> <h3>General details</h3>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="center center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-group name="planType" ng-required ng-model="content.type" ng-init="content.type = 'Base-Plan'" layout="row" class="cc-switch-buttons-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-button value="Base-Plan" class="cc-switch-buttons" md-ink-ripple ng-disabled="content.type == 'Base-Plan'" ng-style="content.type == 'Add-on' ? {'z-index':'1'} : {'z-index':'0'}">Base-plan</md-radio-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-button value="Add-on" class="cc-switch-buttons" md-ink-ripple ng-disabled="content.type == 'Add-on'" ng-style="content.type == 'Base-Plan' ? {'z-index':'1'} : {'z-index':'0'}">Add-on</md-radio-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-radio-group>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-input-container flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<label>Plan type</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash;<md-select flex ng-required="true" ng-model="content.type">&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash;&lt;!&ndash;<md-option value="Services" ng-selected="true">Services</md-option>&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash;<md-option ng-repeat="type in planTypeList" ng-value="type.RecordFieldData">{{type.RecordFieldData}}</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash;</md-select>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-select ng-required="true" flex ng-model="content.type">&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-option value="Add-on">Add-on</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-option value="Base-Plan">Base-Plan</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;</md-select>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Plan name</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input type="text" ng-required="true" min="" name="planName" ng-maxlength="30" ng-model="content.name">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.planName.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="maxlength">Plan name must be between 1-30 characters</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Plan code</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input type="text" ng-required="true" ng-maxlength="15" name="planCode" ng-model="content.code">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.planCode.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="maxlength">Plan code must be between 1-15 characters</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Description</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input type="text" ng-required="false" ng-maxlength="300" md-maxlength="300" name="planDescription" ng-model="content.description">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.planDescription.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="maxlength">Plan description must be between 1-300 characters</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;</md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<md-card flex class="input-block-gen" ng-if="content.type=='Add-on'">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<i class="material-icons">extension</i> <h3>Add-on configuration</h3>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-content layout="column">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="group-sub-head mt-0"><b>Current add-ons</b></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="b b-light" style="overflow: hidden;">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div md-whiteframe="1dp" class="pos-rel" style="z-index: 1;">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="search" flex layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" class="p-10">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-magnify" class="icon s20 mr-15"></md-icon>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input flex ng-model="vm.searchBasePlans" type="text" placeholder="Search for base plans">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-divider></md-divider>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="p-10 light-gray">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-checkbox ng-model="content.allBasePlansSelected" aria-label="Event" class="md-primary m-0">Select all base plans</md-checkbox>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="msg-empty-list" ng-if="basePlanList.length == 0">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-information-outline"></md-icon> No add-on is created yet&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-if="!content.allBasePlansSelected" class="subheaded-list-content" flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-content ms-scroll>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="p-10" layout="row" ng-repeat="s in basePlanList | filter : vm.searchBasePlans | filter : content.billEvery" ng-click="null">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-checkbox ng-model="s.isSelected" aria-label="Event" class="m-0 md-primary">{{s.name}}</md-checkbox>&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<md-card flex class="input-block-gen">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-credit-card-multiple"></md-icon> <h3>Billing details</h3>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="group-sub-head" style="margin-top: 0"><b>Billing frequency</b></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" class="row-offset">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="5" layout="column" id="billingFrqCurrency" layout-align="center start">&ndash;&gt;-->
+            <!--&lt;!&ndash;{{0| isoCurrency: BaseCurrency:0}}&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container ng-hide="true" flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input type="text" min="" max="" name="currency" ng-init="content.currency=BaseCurrency" ng-model="content.currency">&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div layout="column" flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Unit price</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input type="number" ng-required="!content.default_price || !content.add_pricingScheme" min="0" max="100000000000000000" name="unitPrice" ng-disabled="content.default_price && content.add_pricingScheme" ng-model="content.unitPrice" style="text-align: right">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.unitPrice.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="max">Unit price must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="min">Unit price must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-checkbox ng-disabled="!content.add_pricingScheme" ng-model="content.default_price" ng-change="changeDefaultPrice(features,content.unitPrice,content.default_price,content.add_pricingScheme,'add')" aria-label="Default UnitPrice" class="md-primary dep-checkbox" ng-class="{'black-text':content.default_price}">Get default price</md-checkbox><span class="fs-12" ng-if="!content.add_pricingScheme"> (Add pricing scheme to set a default price)</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Occurrence</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input ng-required="true" type="number" min="1" max="100000000000000000" name="frequency" ng-model="content.billingInterval" ng-init="content.billingInterval" style="text-align: right">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.frequency.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="max">Occurrence must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="min">Occurrence must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="w-20"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex="15">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-select ng-required="true" flex ng-model="content.billEvery">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option value="Months" selected>Months</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option value="Years">Years</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option value="Days">Days</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-select>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div layout="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="30" layout="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Trial</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input ng-required="false" type="number" name="trialDays" min="0" ng-init="content.trailDays=30" ng-model="content.trailDays" class="text-right" max="100000000000000000">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-messages="vm.changePlanForm.trialDays.$error">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="max">Trial days must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div ng-message="min">Trial days must be between 1-18 digits</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="start center">days</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div style="margin-top: 50px">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="group-sub-head"><b>Billing cycles</b></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-group ng-model="content.billingCycleType" ng-init="content.billingCycleType='auto'" ng-change="vm.billingCycleHandler(content.billingCycleType)">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-button value="auto" class="md-primary">Auto renewed until cancelled</md-radio-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-radio-button value="fixed" class="md-primary">Fixed number billing cycles</md-radio-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-radio-group>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" style="margin-top: -20px" ng-if="showNoOfCycles" flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Number of billing cycles</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input ng-required="true" type="number" min="1" name="no_of_cycles" ng-model="content.billingCycle" style="text-align: right">&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<div layout="row" style="margin-bottom: 10px">&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container class="md-block">&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Payment collection method</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<input type="text" ng-required="true" min="1" ng-model="row.unitUom">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-select ng-required="true" flex ng-model="content.paymentOption">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option value="Online" selected>Online</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option value="Offline">Offline</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-select>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="5"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" flex="30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="column" flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<label>Tax</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-select ng-required="content.apply_tax" ng-model="content.taxID" ng-disabled="!content.apply_tax">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-option ng-repeat="value in taxGroup" value="{{value.taxgroupid}}">&ndash;&gt;-->
+            <!--&lt;!&ndash;{{value.taxgroupcode}}&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-option>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-select>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-input-container>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-checkbox ng-model="content.apply_tax" aria-label="Apply Tax" class="md-primary dep-checkbox" style="top:0;width: 100px;">Apply Tax</md-checkbox>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<md-card flex class="input-block-gen">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-content class="p-0">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-checkbox ng-change="updateScroll('create')" layout="row" ng-model="content.add_pricingScheme" aria-label="Pricing Scheme" class="m-0 md-accent chkbox-btn"> <h3 class="m-0">Add features</h3></md-checkbox>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;&lt;!&ndash;<md-icon ng-class="content.add_pricingScheme ? 'icon-chevron-up' : 'icon-chevron-down'"></md-icon>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card flex class="input-block-gen" ng-show="content.add_pricingScheme">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="space-between center" flex>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row"><i class="material-icons">stars</i> <h3>Features</h3></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button class="md-raised add-item-main" layout="row" layout-align="start center" ng-click="openFeatureDialog('Add', '')"><md-icon md-font-icon="icon-plus"></md-icon> ADD</md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="center center" class="pos-rel">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="msg-inform-iconed">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span><md-icon md-font-icon="icon-information-outline"></md-icon> Select features for the plan</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="list-header" layout="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex layout-align="center start">Feature name</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div flex="10" layout="row" layout-align="end center">Actions</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-card-content style="padding: 0">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="preloader h-50" ng-if="loadingPriceSchemeFeatures">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-progress-circular></md-progress-circular>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div layout="row" layout-align="center center" class="msg-empty-list" ng-hide="true">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span><md-icon md-font-icon="icon-information-outline"></md-icon> No feature has been added yet</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="mb-30">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="action-row" layout="row" ng-repeat="item in priceSchemeFeatureList" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span flex layout="row" layout-align="start center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-checkbox ng-model="item.isSelected" class="m-0 mr-20 md-primary" ng-change="attachFeature()">{{item[0].feature}} ({{item[0].featureCode}})</md-checkbox><md-button class="md-icon-button op-5"><md-icon md-font-icon="icon-information" class="fs-16"></md-icon></md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;<span flex="10" style="max-width: 150px" layout="row" layout-align="end center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button class="md-icon-button" aria-label="Edit" ng-click="openFeatureDialog('Update', item)">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-pencil"></md-icon>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-tooltip>Edit</md-tooltip>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button class="md-icon-button md-warn action-row-remove" aria-label="Delete" ng-click="showDeleteFeatureConfirm($event,item)" show-gt-sm>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-icon md-font-icon="icon-close-circle"></md-icon>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-tooltip>Delete</md-tooltip>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card-content>&ndash;&gt;-->
+            <!--&lt;!&ndash;</md-card>&ndash;&gt;-->
+            <!--&lt;!&ndash;</form>&ndash;&gt;-->
+        <!--</md-content>-->
+    <!--</div>-->
 </div>
-
-<!-- INVOICE LIST ITEMS -->
-<div class="list-item" layout="row" layout-align="center center" flex ng-repeat="plan in vm.plans | filter:vm.search | filter: global.search"
-     md-ink-ripple
-     ng-click="switchInfoPane('show',plan)"
-     ng-class="{'selected': vm.selectedPlanName === plan.name && showInpageReadpane}">
-
-  <div layout="row" layout-align="center center" flex>
-
-    <div class="dual-info" layout="column" layout-align="center start" flex="30" style="max-width: 275px">
-      <span>{{plan.name}}</span>
-      <div class="dual-info-sub">
-        {{plan.type}}
-      </div>
-    </div>
-
-    <div flex layout="column" layout-align="center start" ng-if="!showInpageReadpane">
-      {{plan.code}}
-    </div>
-
-    <div flex="10" layout="column" layout-align="center start" ng-if="!showInpageReadpane">
-      <span>{{plan.createdDate | parseDate | date: 'dd'}} {{plan.createdDate | parseDate | date: 'MMMM' | limitTo:3}} {{plan.createdDate | parseDate | date: 'yyyy'}}</span>
-    </div>
-
-    <div flex layout="column" layout-align="center end" ng-if="!showInpageReadpane">
-        <span>{{plan.billEvery}}</span>
-    </div>
-
-    <div flex layout="column" layout-align="center end" ng-if="!showInpageReadpane">
-        <span>{{plan.unitPrice | isoCurrency:plan.currency :decimalPoint}}</span>
-    </div>
-
-    <div flex="5"></div>
-
-    <div class="status" layout="column" layout-align="center start" ng-class="{'flex-30':showInpageReadpane == true,'flex-10': showInpageReadpane == false}">
-      <span class="pill" layout="row" layout-align="center center" ng-class="{'negative':plan.status==='Inactive','positive':plan.status==='Active'}">{{plan.status}}</span>
-    </div>
-  </div>
-</div>
-<!-- PRODUCT LIST ITEMS
-
-<!-- PRODUCT LIST ITEMS
