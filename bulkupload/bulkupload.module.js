@@ -19,8 +19,6 @@
   function config($stateProvider, $translatePartialLoaderProvider, msApiProvider, msNavigationServiceProvider, mesentitlementProvider)
   {
 
-    mesentitlementProvider.setStateCheck("bulkupload");
-
     // State
     $stateProvider
       .state('app.bulkupload', {
@@ -32,13 +30,25 @@
           }
         },
         resolve: {
-          security: ['$q','mesentitlement', function($q,mesentitlement){
-            // var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
-			//
-            // if(entitledStatesReturn !== true){
-            //   return $q.reject("unauthorized");
-            // };
-          }]
+			security: ['$q','mesentitlement','$timeout','$rootScope','$state','$location', function($q,mesentitlement,$timeout,$rootScope,$state, $location){
+				return $q(function(resolve, reject) {
+					$timeout(function() {
+						if ($rootScope.isBaseSet2) {
+							resolve(function () {
+								var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
+
+								mesentitlementProvider.setStateCheck("bulkupload");
+
+								if(entitledStatesReturn !== true){
+									return $q.reject("unauthorized");
+								}
+							});
+						} else {
+							return $location.path('/guide');
+						}
+					});
+				});
+			}]
         },
         bodyClass: 'bulkupload'
       });
