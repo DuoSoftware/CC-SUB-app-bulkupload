@@ -12,15 +12,15 @@
                 <div class="p-10 text-center">Select what you have in your file that you are about to upload.</div>
                 <div layout="column" layout-align="center center" flex>
                     <md-input-container>
-                        <md-radio-group name="bulkType" ng-required ng-model="bulkUpload.type" ng-init="bulkUpload.type = 'profile'" layout="row" class="cc-switch-buttons-group">
-                            <md-radio-button value="profile" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'profile'" ng-style="bulkUpload.type == 'subscription' ? {'z-index':'1'} : {'z-index':'0'}">Profiles</md-radio-button>
-                            <md-radio-button value="subscription" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'subscription'" ng-style="bulkUpload.type == 'profile' ? {'z-index':'1'} : {'z-index':'0'}">Subscriptions</md-radio-button>
-                        </md-radio-group>
-                        <!--<label>Type</label>-->
-                        <!--<md-select ng-required="true" flex ng-model="bulkUpload.type">-->
-                            <!--<md-option value="profile">Profile</md-option>-->
-                            <!--<md-option value="subscription">Subscription</md-option>-->
-                        <!--</md-select>-->
+                        <!--<md-radio-group name="bulkType" ng-required ng-model="bulkUpload.type" ng-init="bulkUpload.type = 'profile'" layout="row" class="cc-switch-buttons-group">-->
+                            <!--<md-radio-button value="profile" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'profile'" ng-style="bulkUpload.type == 'subscription' ? {'z-index':'1'} : {'z-index':'0'}">Profiles</md-radio-button>-->
+                            <!--<md-radio-button value="subscription" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'subscription'" ng-style="bulkUpload.type == 'profile' ? {'z-index':'1'} : {'z-index':'0'}">Subscriptions</md-radio-button>-->
+                        <!--</md-radio-group>-->
+                        <label>Type</label>
+                        <md-select ng-required="true" flex ng-model="bulkUpload.type">
+                            <md-option value="profile">Profile</md-option>
+                            <md-option value="subscription">Subscription</md-option>
+                        </md-select>
                     </md-input-container>
                 </div>
                 <div flex></div>

@@ -200,7 +200,8 @@
 		$scope.bulkUpload={};
 		$scope.bulkUpload.type='profile';
 		$scope.bulkSampleCsv={
-			0:"https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv"
+			0:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/profiles.csv",
+			1:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/subscriptions.csv"
 		};
 		//$scope.bulkSampleCsv.push("https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv");
 
@@ -256,6 +257,10 @@
 								{
 									$scope.fileValidated=false;
 								}
+								if(contentRec[3]==""||contentRec[3]==null||contentRec[3]==undefined)
+								{
+									$scope.fileValidated=false;
+								}
 
 								//for(var i=0;i<contentRec.length;i++)
 								//{
@@ -278,11 +283,15 @@
 								$scope.divClass = false;
 								// },0);
 								var fileType=$scope.addedBulkFile.split(',')[0]+",";
-								var gutranid=Date();
+								var gutranid=new Date();
+								var timest=new Date(gutranid+ ' UTC').getTime();
+
+								var filenameEdit=filename.replace(/[\s]/g, '_');
+
 
 								var uploadBulkFileObj = {
 									"base64Image": $scope.addedBulkFile,
-									"fileName": filename,
+									"fileName": filenameEdit+"_"+timest,
 									"format": format,
 									"app": app,
 									"fileType": fileType
@@ -294,7 +303,7 @@
 										"processCode": $scope.bulkUpload.type,
 										"data": $scope.bulkUpload.uploadedUrl,
 										"isToAPIManagement": false,
-										"guTranId": gutranid
+										"guTranId": timest
 									}
 
 									$charge.bulkupload().uploadFile(processBulkFileObj).success(function (data) {
