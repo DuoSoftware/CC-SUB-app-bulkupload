@@ -11,7 +11,7 @@
             <md-content ms-scroll class="accordion-body" ng-if="expandAccordion != 1" layout="column" layout-align="center center" flex>
                 <div class="p-10 text-center">Select what you have in your file that you are about to upload.</div>
                 <div layout="column" layout-align="center center" flex>
-                    <md-input-container>
+                    <md-input-container class="w-250">
                         <!--<md-radio-group name="bulkType" ng-required ng-model="bulkUpload.type" ng-init="bulkUpload.type = 'profile'" layout="row" class="cc-switch-buttons-group">-->
                             <!--<md-radio-button value="profile" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'profile'" ng-style="bulkUpload.type == 'subscription' ? {'z-index':'1'} : {'z-index':'0'}">Profiles</md-radio-button>-->
                             <!--<md-radio-button value="subscription" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'subscription'" ng-style="bulkUpload.type == 'profile' ? {'z-index':'1'} : {'z-index':'0'}">Subscriptions</md-radio-button>-->
@@ -19,11 +19,11 @@
                         <label>Type</label>
                         <md-select ng-required="true" flex ng-model="bulkUpload.type">
                             <md-option value="profile">Profile</md-option>
-                            <md-option value="subscription">Subscription</md-option>
+                            <md-option value="subscriptionBulk">Subscription</md-option>
                         </md-select>
                     </md-input-container>
                 </div>
-                <div flex></div>
+                <div flex="10"></div>
                 <div layout="row" layout-align="end center" fill-width>
                     <md-button class="md-accent" ng-click="showAccordionBody(1, true)">Next <md-icon md-font-icon="icon-chevron-down" class="fs-12"></md-icon> </md-button>
                 </div>
@@ -59,8 +59,9 @@
 
                 <div layout="row" layout-align="end center" fill-width>
                     <!--<md-button ng-click="clearform()">Clear</md-button>-->
-                    <md-progress-circular ng-if="vm.submitted"></md-progress-circular>
-                    <md-button ng-disabled="vm.submitted" type="submit" class="m-0 md-raised md-accent"><md-icon md-font-icon="icon-cloud-upload" class="mr-10"></md-icon> Upload</md-button>
+                    <md-progress-circular class="gen-save-indicator" ng-if="vm.submitted"></md-progress-circular>
+                    ></md-progress-circular>
+                    <md-button ng-disabled="vm.submitted" type="submit" class="ml-10 m-0 md-raised md-accent"><md-icon md-font-icon="icon-cloud-upload" class="mr-10"></md-icon> Upload</md-button>
                 </div>
             </md-content>
         </div>
@@ -71,16 +72,16 @@
         </div>
         <div layout="column" layout-align="center center" class="pos-rel" style="z-index:1;background: #fafafa;" fill-width flex>
             <div class="text-center fs-12 mb-10 op-5">Sample document</div>
-            <md-button ng-model="bulkSampleCsv" md-whiteframe="1dp" layout="column" layout-align="start center" class="bg-white w-100 h-100 m-0 attachment text-center" ng-click="openItemUrl(bulkSampleCsv[0])" readonly="true">
+            <md-button ng-model="sample" ng-repeat="sample in bulkSampleCsv" ng-if="bulkUpload.type == sample.key" md-whiteframe="1dp" layout="column" layout-align="start center" class="bg-white h-100 m-0 attachment text-center" ng-click="openItemUrl(sample)" readonly="true">
                 <md-icon class="w-60 h-65 fs-50 md-accent" md-font-icon="icon-file-document-box"></md-icon>
                 <div flex>
-                    <div>{{bulkSampleCsv[0].split('/').pop()}}</div>
+                    <div>{{sample.value.split('/').pop()}}</div>
                 </div>
             </md-button>
             <md-icon ng-click="sampleBulkPreview()" md-font-icon="icon-{{showSampleBulkPreview ? 'eye-off' : 'eye'}}" class="font-accent mv-10 fs-20"><md-tooltip>Preview</md-tooltip></md-icon>
         </div>
         <div class="pos-rel" style="z-index:0;" ng-class="{'flex':showSampleBulkPreview}">
-            <div md-whiteframe="1dp" class="animate-slide-down p-10 mt-10 bg-white" ng-if="showSampleBulkPreview"><img src="assets/images/cc_bulk_preview.jpg" alt=""></div>
+            <div md-whiteframe="1dp" class="animate-slide-down p-10 mt-10 bg-white" ng-if="showSampleBulkPreview"><img src="assets/images/{{bulkUpload.type == 'profile' ? 'cc_bulk_prof_preview' : 'cc_bulk_subs_preview'}}.jpg" alt=""></div>
         </div>
         <div class="mt-20">
             <span class="font-accent"><md-icon class="fs-16 w-15 h-15 line-height-14 font-accent" md-font-icon="icon-information-outline"></md-icon> IMPORTANT</span> <span class="op-5"><i>The document you are about to upload has to follow the <b>exact</b> format the sample gives.</br> Invalid formats will be rejected.</i></span>

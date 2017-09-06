@@ -200,8 +200,14 @@
 		$scope.bulkUpload={};
 		$scope.bulkUpload.type='profile';
 		$scope.bulkSampleCsv={
-			0:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/profiles.csv",
-			1:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/subscriptions.csv"
+			0:{
+				key:"profile",
+				value:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/profiles.csv"
+			},
+			1:{
+				key:"subscriptionBulk",
+				value:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/subscriptions.csv"
+			}
 		};
 		//$scope.bulkSampleCsv.push("https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv");
 

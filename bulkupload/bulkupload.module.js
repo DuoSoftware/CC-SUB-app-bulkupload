@@ -1,8 +1,8 @@
 ////////////////////////////////
 // App : BulkUpload
 // Owner  : Gihan Herath
-// Last changed date : 2017/08/25
-// Version : 6.1.0.1
+// Last changed date : 2017/09/06
+// Version : 6.1.0.2
 // Modified By : Kasun
 /////////////////////////////////
 
@@ -65,7 +65,7 @@
       /*stateParams: {
        'param1': 'page'
        },*/
-      weight   : 6
+      weight   : 11
     });
   }
 
