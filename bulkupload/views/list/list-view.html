@@ -11,7 +11,7 @@
             <md-content ms-scroll class="accordion-body" ng-if="expandAccordion != 1" layout="column" layout-align="center center" flex>
                 <div class="p-10 text-center">Select what you have in your file that you are about to upload.</div>
                 <div layout="column" layout-align="center center" flex>
-                    <md-input-container>
+                    <md-input-container class="w-250">
                         <!--<md-radio-group name="bulkType" ng-required ng-model="bulkUpload.type" ng-init="bulkUpload.type = 'profile'" layout="row" class="cc-switch-buttons-group">-->
                             <!--<md-radio-button value="profile" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'profile'" ng-style="bulkUpload.type == 'subscription' ? {'z-index':'1'} : {'z-index':'0'}">Profiles</md-radio-button>-->
                             <!--<md-radio-button value="subscription" class="cc-switch-buttons" md-ink-ripple ng-disabled="bulkUpload.type == 'subscription'" ng-style="bulkUpload.type == 'profile' ? {'z-index':'1'} : {'z-index':'0'}">Subscriptions</md-radio-button>-->
@@ -23,7 +23,7 @@
                         </md-select>
                     </md-input-container>
                 </div>
-                <div flex></div>
+                <div flex="10"></div>
                 <div layout="row" layout-align="end center" fill-width>
                     <md-button class="md-accent" ng-click="showAccordionBody(1, true)">Next <md-icon md-font-icon="icon-chevron-down" class="fs-12"></md-icon> </md-button>
                 </div>
@@ -59,8 +59,9 @@
 
                 <div layout="row" layout-align="end center" fill-width>
                     <!--<md-button ng-click="clearform()">Clear</md-button>-->
-                    <md-progress-circular ng-if="vm.submitted"></md-progress-circular>
-                    <md-button ng-disabled="vm.submitted" type="submit" class="m-0 md-raised md-accent"><md-icon md-font-icon="icon-cloud-upload" class="mr-10"></md-icon> Upload</md-button>
+                    <md-progress-circular class="gen-save-indicator" ng-if="vm.submitted"></md-progress-circular>
+                    ></md-progress-circular>
+                    <md-button ng-disabled="vm.submitted" type="submit" class="ml-10 m-0 md-raised md-accent"><md-icon md-font-icon="icon-cloud-upload" class="mr-10"></md-icon> Upload</md-button>
                 </div>
             </md-content>
         </div>
