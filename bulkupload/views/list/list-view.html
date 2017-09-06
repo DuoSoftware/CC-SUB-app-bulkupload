@@ -71,10 +71,10 @@
         </div>
         <div layout="column" layout-align="center center" class="pos-rel" style="z-index:1;background: #fafafa;" fill-width flex>
             <div class="text-center fs-12 mb-10 op-5">Sample document</div>
-            <md-button ng-model="bulkSampleCsv" md-whiteframe="1dp" layout="column" layout-align="start center" class="bg-white w-100 h-100 m-0 attachment text-center" ng-click="openItemUrl(bulkSampleCsv[0])" readonly="true">
+            <md-button ng-model="sample" ng-repeat="sample in bulkSampleCsv" ng-if="bulkUpload.type+'s' == sample.split('/').pop().split('.')" md-whiteframe="1dp" layout="column" layout-align="start center" class="bg-white w-100 h-100 m-0 attachment text-center" ng-click="openItemUrl(sample)" readonly="true">
                 <md-icon class="w-60 h-65 fs-50 md-accent" md-font-icon="icon-file-document-box"></md-icon>
                 <div flex>
-                    <div>{{bulkSampleCsv[0].split('/').pop()}}</div>
+                    <div>{{sample.split('/').pop()}}</div>
                 </div>
             </md-button>
             <md-icon ng-click="sampleBulkPreview()" md-font-icon="icon-{{showSampleBulkPreview ? 'eye-off' : 'eye'}}" class="font-accent mv-10 fs-20"><md-tooltip>Preview</md-tooltip></md-icon>
