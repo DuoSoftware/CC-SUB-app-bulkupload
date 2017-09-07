@@ -1,9 +1,9 @@
 ////////////////////////////////
 // App : BulkUpload
 // Owner  : Gihan Herath
-// Last changed date : 2017/09/06
+// Last changed date : 2017/09/07
 // Version : 6.1.0.2
-// Modified By : Kasun
+// Modified By : Gihan
 /////////////////////////////////
 
 (function ()
@@ -33,7 +33,8 @@
 			security: ['$q','mesentitlement','$timeout','$rootScope','$state','$location', function($q,mesentitlement,$timeout,$rootScope,$state, $location){
 				return $q(function(resolve, reject) {
 					$timeout(function() {
-						if ($rootScope.isBaseSet2) {
+						if (true) {
+						//if ($rootScope.isBaseSet2) {
 							resolve(function () {
 								var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
 

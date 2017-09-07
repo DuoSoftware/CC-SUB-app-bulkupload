@@ -238,9 +238,30 @@
 
 					FR.onload = function(e) {
 						var contents = e.target.result;
-						$scope.$apply(function () {
-							$scope.fileReader = contents.split('\n');
-						});
+
+            if(format=="xlsx")
+            {
+              var workbook = XLSX.read(contents, {
+                type: 'binary'
+              });
+              workbook.SheetNames.forEach(function(sheetName) {
+                // Here is your object
+                //var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                //var json_object = JSON.stringify(XL_row_object);
+                var XL_csv_object = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName]);
+                //console.log(json_object);
+                $scope.$apply(function () {
+                  $scope.fileReader = XL_csv_object.split('\n');
+                });
+
+              })
+            }
+            else
+            {
+              $scope.$apply(function () {
+                $scope.fileReader = contents.split('\n');
+              });
+            }
 
 						$scope.fileValidated=true;
 						angular.forEach($scope.fileReader, function (obj) {
@@ -350,7 +371,8 @@
 							refreshUploader();
 						}
 					};
-					FR.readAsText(obj.lfFile);
+					FR.readAsBinaryString( obj.lfFile );
+					//FR.readAsText(obj.lfFile);
 				});
 			}
 			else
