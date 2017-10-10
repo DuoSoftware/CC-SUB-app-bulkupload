@@ -25,25 +25,25 @@
                 <div class="title" layout="column" layout-align="center start">
                     <div class="logo" layout="row" layout-align="start center">
                         <span class="logo-icon">
-                          <img src="app/core/app_icons/plans_app_icon.png" alt=""/>
+                          <img src="app/core/app_icons/bulkupload_app_icon.png" alt=""/>
                         </span>
                         <span class="logo-text">Bulkupload</span>
                     </div>
                 </div>
-                <div layout="row">
-                    <div class="search-wrapper md-whiteframe-4dp" layout="row" layout-align="start center" flex ng-class="{'op-5':vm.activePlanPaneIndex == 1}">
-                        <md-button class="md-icon-button sidenav-toggle" ng-click="vm.toggleSidenav('main-sidenav')" hide-gt-md aria-label="Toggle Sidenav">
-                            <md-icon class="icon" md-font-icon="icon-menu"></md-icon>
-                        </md-button>
+                <!--<div layout="row">-->
+                    <!--<div class="search-wrapper md-whiteframe-4dp" layout="row" layout-align="start center" flex ng-class="{'op-5':vm.activePlanPaneIndex == 1}">-->
+                        <!--<md-button class="md-icon-button sidenav-toggle" ng-click="vm.toggleSidenav('main-sidenav')" hide-gt-md aria-label="Toggle Sidenav">-->
+                            <!--<md-icon class="icon" md-font-icon="icon-menu"></md-icon>-->
+                        <!--</md-button>-->
 
-                        <div class="search" flex layout="row" layout-align="start center">
-                            <md-icon md-font-icon="icon-magnify" class="icon s24"></md-icon>
-                            <input ng-disabled="vm.activePlanPaneIndex == 1" flex ng-model="vm.search" type="text" ng-keypress="searchKeyPress($event,vm.search,vm.search.length)" ng-change="loadByKeywordPlan(vm.search,3)" placeholder="Search for Plans">
-                        </div>
-                    </div>
-                    <md-button class="md-raised md-accent main-app-create" layout="row" layout-align="center center" aria-label="compose" ng-disabled="vm.activePlanPaneIndex == 1" ng-click="toggleEdit()" ng-if="!inpageReadPaneEdit"><span class="fs-18 mr-10">+</span> NEW
-                    </md-button>
-                </div>
+                        <!--<div class="search" flex layout="row" layout-align="start center">-->
+                            <!--<md-icon md-font-icon="icon-magnify" class="icon s24"></md-icon>-->
+                            <!--<input ng-disabled="vm.activePlanPaneIndex == 1" flex ng-model="vm.search" type="text" ng-keypress="searchKeyPress($event,vm.search,vm.search.length)" ng-change="loadByKeywordPlan(vm.search,3)" placeholder="Search for Plans">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<md-button class="md-raised md-accent main-app-create" layout="row" layout-align="center center" aria-label="compose" ng-disabled="vm.activePlanPaneIndex == 1" ng-click="toggleEdit()" ng-if="!inpageReadPaneEdit"><span class="fs-18 mr-10">+</span> NEW-->
+                    <!--</md-button>-->
+                <!--</div>-->
             </div>
             <!--<div class="v-nav">-->
             <!--<div ng-include="'app/main/plans/sidenavs/main/main-sidenav.html'"></div>-->
@@ -101,21 +101,21 @@
         <!--</div>-->
         <!-- / CONTENT HEADER -->
 
-        <div layout="row" flex>
+        <div layout="row" flex class="no-header">
             <!-- CONTENT CARD -->
-            <div class="content-card" layout="column" ng-class="{'flex-30':showInpageReadpane}" flex>
+            <div class="content-card" layout="column" ng-class="{'flex-30':showInpageReadpane}" flex style="margin-top: 0">
 
                 <!-- CONTENT TOOLBAR -->
-                <div class="toolbar list-header" layout="row" layout-align="space-between center" ng-if="vm.activePlanPaneIndex === 0">
-                    <div ng-include="'app/main/bulkupload/views/list/list-header.html'" layout="row" flex layout-align="start center"></div>
-                </div>
-                <div class="toolbar" layout="row" layout-align="end center" ng-if="vm.activePlanPaneIndex === 1">
-                    <md-button class="md-icon-button" style="margin-right: -10px"
-                               ng-click="vm.closeReadPane()"
-                               aria-label="Back">
-                        <md-icon md-font-icon="icon-close"></md-icon>
-                    </md-button>
-                </div>
+                <!--<div class="toolbar list-header" layout="row" layout-align="space-between center" ng-if="vm.activePlanPaneIndex === 0">-->
+                    <!--<div ng-include="'app/main/bulkupload/views/list/list-header.html'" layout="row" flex layout-align="start center"></div>-->
+                <!--</div>-->
+                <!--<div class="toolbar" layout="row" layout-align="end center" ng-if="vm.activePlanPaneIndex === 1">-->
+                    <!--<md-button class="md-icon-button" style="margin-right: -10px"-->
+                               <!--ng-click="vm.closeReadPane()"-->
+                               <!--aria-label="Back">-->
+                        <!--<md-icon md-font-icon="icon-close"></md-icon>-->
+                    <!--</md-button>-->
+                <!--</div>-->
                 <!-- / CONTENT TOOLBAR -->
 
                 <!-- CONTENT WRAPPER -->
@@ -137,22 +137,22 @@
                         <!-- / INVOICE LIST PANE -->
 
                         <!-- INVOICE DISPLAY PANE -->
-                        <md-tab>
-                            <md-tab-label>Plans Display Pane</md-tab-label>
-                            <md-tab-body>
-                                <div class="content plan-display-pane"
-                                     ng-include="'app/main/bulkupload/views/read/read-view.html'">
-                                </div>
-                                <div md-whiteframe="8dp" layout="row" layout-align="space-between center" class="bottom-fixed-bar fixed">
-                                    <div layout="row"></div>
+                        <!--<md-tab>-->
+                            <!--<md-tab-label>Plans Display Pane</md-tab-label>-->
+                            <!--<md-tab-body>-->
+                                <!--<div class="content plan-display-pane"-->
+                                     <!--ng-include="'app/main/bulkupload/views/read/read-view.html'">-->
+                                <!--</div>-->
+                                <!--<div md-whiteframe="8dp" layout="row" layout-align="space-between center" class="bottom-fixed-bar fixed">-->
+                                    <!--<div layout="row"></div>-->
 
-                                    <!--<div layout="row" class="layout-row">-->
-                                        <!--<md-button ng-click="clearform()">Clear</md-button>-->
-                                        <!--<md-button ng-disabled="vm.submitted" type="submit" form="changePlanForm" class="md-raised md-accent">Save</md-button>-->
-                                    <!--</div>-->
-                                </div>
-                            </md-tab-body>
-                        </md-tab>
+                                    <!--&lt;!&ndash;<div layout="row" class="layout-row">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<md-button ng-click="clearform()">Clear</md-button>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<md-button ng-disabled="vm.submitted" type="submit" form="changePlanForm" class="md-raised md-accent">Save</md-button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--</div>-->
+                            <!--</md-tab-body>-->
+                        <!--</md-tab>-->
                         <!-- / INVOICE DISPLAY PANE -->
                     </md-tabs>
 

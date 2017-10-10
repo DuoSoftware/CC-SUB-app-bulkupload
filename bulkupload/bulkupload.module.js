@@ -1,8 +1,8 @@
 ////////////////////////////////
 // App : BulkUpload
 // Owner  : Gihan Herath
-// Last changed date : 2017/08/25
-// Version : 6.1.0.1
+// Last changed date : 2017/09/07
+// Version : 6.1.0.2
 // Modified By : Gihan
 /////////////////////////////////
 
@@ -19,8 +19,6 @@
   function config($stateProvider, $translatePartialLoaderProvider, msApiProvider, msNavigationServiceProvider, mesentitlementProvider)
   {
 
-    mesentitlementProvider.setStateCheck("bulkupload");
-
     // State
     $stateProvider
       .state('app.bulkupload', {
@@ -32,13 +30,26 @@
           }
         },
         resolve: {
-          security: ['$q','mesentitlement', function($q,mesentitlement){
-            var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
+			security: ['$q','mesentitlement','$timeout','$rootScope','$state','$location', function($q,mesentitlement,$timeout,$rootScope,$state, $location){
+				return $q(function(resolve, reject) {
+					$timeout(function() {
+						if (true) {
+						//if ($rootScope.isBaseSet2) {
+							resolve(function () {
+								var entitledStatesReturn = mesentitlement.stateDepResolver('bulkupload');
 
-            if(entitledStatesReturn !== true){
-              return $q.reject("unauthorized");
-            };
-          }]
+								mesentitlementProvider.setStateCheck("bulkupload");
+
+								if(entitledStatesReturn !== true){
+									return $q.reject("unauthorized");
+								}
+							});
+						} else {
+							return $location.path('/guide');
+						}
+					});
+				});
+			}]
         },
         bodyClass: 'bulkupload'
       });
@@ -55,7 +66,7 @@
       /*stateParams: {
        'param1': 'page'
        },*/
-      weight   : 6
+      weight   : 11
     });
   }
 

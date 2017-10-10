@@ -197,149 +197,232 @@
 			//});
 		}
 
-    $scope.bulkUpload={};
-    $scope.bulkSampleCsv={
-      0:"https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv"
-    };
-    //$scope.bulkSampleCsv.push("https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv");
+		$scope.bulkUpload={};
+		$scope.bulkUpload.type='profile';
+		$scope.bulkSampleCsv={
+			0:{
+				key:"profile",
+				value:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/profiles.csv"
+			},
+			1:{
+				key:"subscriptionBulk",
+				value:"https://ccresourcegrpdisks974.blob.core.windows.net/bulkupload/subscriptions.csv"
+			}
+		};
+		//$scope.bulkSampleCsv.push("https://ccresourcegrpdisks974.blob.core.windows.net/b2c/profiles.csv");
 
-    vm.submitted=false;
-    $scope.submitBulkUpload = function () {
-      if($scope.bulkUpload.files.length>0 && $scope.bulkUpload.type!="" && $scope.bulkUpload.type!=undefined) {
-        vm.submitted=true;
-        angular.forEach($scope.bulkUpload.files, function (obj) {
-          //$uploader.uploadMedia("CCProfile_"+$scope.customer_supplier.profile.profileId, obj.lfFile, obj.lfFileName);
-          //
-          //$uploader.onSuccess(function (e, data) {
-          //  //debugger;
-          //  var path = $storage.getMediaUrl("CCProfile_"+$scope.customer_supplier.profile.profileId, obj.lfFileName);
-          //
-          //  $scope.customer_supplier.profile.attachment = path;
-          //  $scope.submitProfile();
-          //});
-          //$uploader.onError(function (e, data) {
-          //  //debugger;
-          //  $scope.customer_supplier.profile.attachment = "";
-          //  $scope.submitProfile();
-          //});
-          var filename= obj.lfFileName.substr(0,obj.lfFileName.length-(obj.lfFileName.split('.')[obj.lfFileName.split('.').length-1].length+1));
-          var format=obj.lfFileName.split('.')[obj.lfFileName.split('.').length-1];
-          var app="bulkUploads/BulkType_"+$scope.bulkUpload.type;
+		vm.submitted=false;
+		$scope.submitBulkUpload = function () {
+			if($scope.bulkUpload.files.length>0 && $scope.bulkUpload.type!="" && $scope.bulkUpload.type!=undefined) {
+				vm.submitted=true;
+				angular.forEach($scope.bulkUpload.files, function (obj) {
+					//$uploader.uploadMedia("CCProfile_"+$scope.customer_supplier.profile.profileId, obj.lfFile, obj.lfFileName);
+					//
+					//$uploader.onSuccess(function (e, data) {
+					//  //debugger;
+					//  var path = $storage.getMediaUrl("CCProfile_"+$scope.customer_supplier.profile.profileId, obj.lfFileName);
+					//
+					//  $scope.customer_supplier.profile.attachment = path;
+					//  $scope.submitProfile();
+					//});
+					//$uploader.onError(function (e, data) {
+					//  //debugger;
+					//  $scope.customer_supplier.profile.attachment = "";
+					//  $scope.submitProfile();
+					//});
+					var filename= obj.lfFileName.substr(0,obj.lfFileName.length-(obj.lfFileName.split('.')[obj.lfFileName.split('.').length-1].length+1));
+					var format=obj.lfFileName.split('.')[obj.lfFileName.split('.').length-1];
+					var app="bulkUploads/BulkType_"+$scope.bulkUpload.type;
 
-          var FR= new FileReader();
+					var FR= new FileReader();
 
-          FR.onload = function(e) {
-            var contents = e.target.result;
-            $scope.$apply(function () {
-              $scope.fileReader = contents.split('\n');
-            });
+					FR.onload = function(e) {
+						var contents = e.target.result;
 
-            $scope.fileValidated=true;
-            angular.forEach($scope.fileReader, function (obj) {
-              if(obj=="" && $scope.fileReader[$scope.fileReader.length-1]==obj)
-              {
-
-              }
-              else
-              {
-                var contentRec=obj.split(',');
-                if(contentRec[0]==""||contentRec[0]==null||contentRec[0]==undefined)
-                {
-                  $scope.fileValidated=false;
-                }
-                if(contentRec[1]==""||contentRec[1]==null||contentRec[1]==undefined)
-                {
-                  $scope.fileValidated=false;
-                }
-                if(contentRec[2]==""||contentRec[2]==null||contentRec[2]==undefined)
-                {
-                  $scope.fileValidated=false;
-                }
-
-                //for(var i=0;i<contentRec.length;i++)
-                //{
-                //  if(contentRec[i]==""||contentRec[i]==null||contentRec[i]==undefined)
-                //  {
-                //    $scope.fileValidated=false;
-                //  }
-                //}
-              }
-            });
-
-            if($scope.fileValidated)
+            if(format=="xlsx")
             {
-              var FR2= new FileReader();
-              FR2.readAsDataURL( obj.lfFile );
-              FR2.addEventListener("load", function(e) {
-                // $timeout(function () {
-                $scope.addedBulkFile = e.target.result;
-                $scope.$apply();
-                $scope.divClass = false;
-                // },0);
-                var fileType=$scope.addedBulkFile.split(',')[0]+",";
-                var gutranid=Date();
-
-                var uploadBulkFileObj = {
-                  "base64Image": $scope.addedBulkFile,
-                  "fileName": filename,
-                  "format": format,
-                  "app": app,
-                  "fileType": fileType
-                }
-                $charge.storage().storeImage(uploadBulkFileObj).success(function (data) {
-                  $scope.bulkUpload.uploadedUrl = data.fileUrl;
-
-                  var processBulkFileObj = {
-                    "processCode": $scope.bulkUpload.type,
-                    "data": $scope.bulkUpload.uploadedUrl,
-                    "isToAPIManagement": false,
-                    "guTranId": gutranid
-                  }
-
-                  $charge.bulkupload().uploadFile(processBulkFileObj).success(function (data) {
-                    notifications.toast("Bulk file uploaded successfully","success");
-                    $scope.bulkUpload={};
-                    $scope.bulkUpload.files=[];
-                    vm.submitted=false;
-
-                  }).error(function (data) {
-                    //console.log(data);
-                    notifications.toast("Uploading bulk file Failed","error");
-                    vm.submitted=false;
-                  })
-
-                }).error(function (data) {
-                  //console.log(data);
-                  notifications.toast("Uploading bulk file Failed","error");
-                  $scope.bulkUpload.uploadedUrl = "";
-                  vm.submitted=false;
-                })
-
+              var workbook = XLSX.read(contents, {
+                type: 'binary'
               });
+              workbook.SheetNames.forEach(function(sheetName) {
+                // Here is your object
+                //var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                //var json_object = JSON.stringify(XL_row_object);
+                var XL_csv_object = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName]);
+                //console.log(json_object);
+                $scope.$apply(function () {
+                  $scope.fileReader = XL_csv_object.split('\n');
+                });
+
+              })
             }
             else
             {
-              notifications.toast("File validation failed. Please check the file content again!","error");
-              $scope.bulkUpload.files=[];
-              vm.submitted=false;
+              $scope.$apply(function () {
+                $scope.fileReader = contents.split('\n');
+              });
             }
-          };
-          FR.readAsText(obj.lfFile);
-        });
-      }
-      else
-      {
-        notifications.toast("Please add a file and select type to upload","error");
-      }
-    }
 
-    $scope.openItemUrl = function(url) {
-      //$window.location.href=url;
-      $window.open(
-        url
-      );
-    };
+						$scope.fileValidated=true;
+						angular.forEach($scope.fileReader, function (obj) {
+							if(obj=="" && $scope.fileReader[$scope.fileReader.length-1]==obj)
+							{
 
+							}
+							else
+							{
+								var contentRec=obj.split(',');
+								if(contentRec[0]==""||contentRec[0]==null||contentRec[0]==undefined)
+								{
+									$scope.fileValidated=false;
+								}
+								if(contentRec[1]==""||contentRec[1]==null||contentRec[1]==undefined)
+								{
+									$scope.fileValidated=false;
+								}
+								if(contentRec[2]==""||contentRec[2]==null||contentRec[2]==undefined)
+								{
+									$scope.fileValidated=false;
+								}
+								if(contentRec[3]==""||contentRec[3]==null||contentRec[3]==undefined)
+								{
+									$scope.fileValidated=false;
+								}
+
+								//for(var i=0;i<contentRec.length;i++)
+								//{
+								//  if(contentRec[i]==""||contentRec[i]==null||contentRec[i]==undefined)
+								//  {
+								//    $scope.fileValidated=false;
+								//  }
+								//}
+							}
+						});
+
+						if($scope.fileValidated)
+						{
+							var FR2= new FileReader();
+							FR2.readAsDataURL( obj.lfFile );
+							FR2.addEventListener("load", function(e) {
+								// $timeout(function () {
+								$scope.addedBulkFile = e.target.result;
+								$scope.$apply();
+								$scope.divClass = false;
+								// },0);
+								var fileType=$scope.addedBulkFile.split(',')[0]+",";
+								var gutranid=new Date();
+								var timest=new Date(gutranid+ ' UTC').getTime();
+
+								var filenameEdit=filename.replace(/[\s]/g, '_');
+
+
+								var uploadBulkFileObj = {
+									"base64Image": $scope.addedBulkFile,
+									"fileName": filenameEdit+"_"+timest,
+									"format": format,
+									"app": app,
+									"fileType": fileType
+								}
+								$charge.storage().storeImage(uploadBulkFileObj).success(function (data) {
+									$scope.bulkUpload.uploadedUrl = data.fileUrl;
+
+									var processBulkFileObj = {
+										"processCode": $scope.bulkUpload.type,
+										"data": $scope.bulkUpload.uploadedUrl,
+										"isToAPIManagement": false,
+										"guTranId": timest
+									}
+
+									$charge.bulkupload().uploadFile(processBulkFileObj).success(function (data) {
+										notifications.toast("Bulk file uploaded successfully","success");
+										$scope.bulkUpload={};
+										$scope.bulkUpload.files=[];
+										$scope.uploadDone = true;
+										$scope.uploadDoneMessage = "Uploading success";
+										vm.submitted=false;
+										refreshUploader();
+
+									}).error(function (data) {
+										//console.log(data);
+										notifications.toast("Uploading bulk file Failed","error");
+										$scope.uploadDone = true;
+										$scope.uploadDoneMessage = "Uploading failed";
+										vm.submitted=false;
+										refreshUploader();
+									})
+
+								}).error(function (data) {
+									//console.log(data);
+									notifications.toast("Uploading bulk file Failed","error");
+									$scope.uploadDone = true;
+									$scope.uploadDoneMessage = "Uploading failed";
+									$scope.bulkUpload.uploadedUrl = "";
+									vm.submitted=false;
+									refreshUploader();
+								})
+
+							});
+						}
+						else
+						{
+							notifications.toast("File validation failed. Please check the file content again!","error");
+							$scope.bulkUpload.files=[];
+							vm.submitted=false;
+							refreshUploader();
+						}
+					};
+					FR.readAsBinaryString( obj.lfFile );
+					//FR.readAsText(obj.lfFile);
+				});
+			}
+			else
+			{
+				notifications.toast("Please add a file and select type to upload","error");
+			}
+		}
+
+		$scope.openItemUrl = function(url) {
+			//$window.location.href=url;
+			$window.open(
+				url, '_blank'
+			);
+		};
+
+		//Kasun_Wijeratne_29_AUG_2017
+		function refreshUploader() {
+			// debugger;
+			document.getElementById('refreshUploader').click();
+		};
+		$scope.sampleBulkPreview = function () {
+			$scope.showSampleBulkPreview = !$scope.showSampleBulkPreview;
+		};
+		$scope.isUploaderVisited = false;
+		$scope.step1Done = false;
+		$scope.step2Done = false;
+		$scope.showAccordionBody = function (accordion, isValidIncrement) {
+			$timeout(function(){
+				if($scope.isUploaderVisited){
+					$scope.expandAccordion = accordion;
+				}else if(accordion == 1 && isValidIncrement){
+					$scope.expandAccordion = accordion;
+					$scope.isUploaderVisited = true;
+					$scope.step1Done = true;
+				}else if(accordion == 0){
+					$scope.expandAccordion = accordion;
+				}
+			});
+		};
+		$scope.resetUploader = function (state) {
+			if(state == 'reupload'){
+				$scope.bulkUpload.files=[];
+				$scope.uploadDone = false;
+			}else{
+				$scope.bulkUpload.files=[];
+				$scope.expandAccordion = 0;
+				$scope.uploadDone = false;
+			}
+		};
+		//Kasun_Wijeratne_29_AUG_2017 - END
 		function changePlans(){
 			toggleinnerView('add');
 		}
@@ -570,32 +653,32 @@
 			var dbNamePart2="";
 			var dbName="";
 			var filter="";
-      var data={};
+			var data={};
 			dbNamePart1=getDomainName().split('.')[0];
 			dbNamePart2=getDomainExtension();
 			dbName=dbNamePart1+"_"+dbNamePart2;
 			//filter="api-version=2016-09-01&?search=*&$orderby=createdDate desc&$skip="+skip+"&$top="+take+"&$filter=(domain eq '"+dbName+"')";
 
-      if(status=="")
-      {
-        data={
-          "search": "*",
-          "filter": "(domain eq '"+dbName+"')",
-          "orderby" : "createdDate desc",
-          "top":take,
-          "skip":skip
-        }
-      }
-      else
-      {
-        data={
-          "search": "*",
-          "filter": "(domain eq '"+dbName+"' and status eq '"+status+"')",
-          "orderby" : "createdDate desc",
-          "top":take,
-          "skip":skip
-        }
-      }
+			if(status=="")
+			{
+				data={
+					"search": "*",
+					"filter": "(domain eq '"+dbName+"')",
+					"orderby" : "createdDate desc",
+					"top":take,
+					"skip":skip
+				}
+			}
+			else
+			{
+				data={
+					"search": "*",
+					"filter": "(domain eq '"+dbName+"' and status eq '"+status+"')",
+					"orderby" : "createdDate desc",
+					"top":take,
+					"skip":skip
+				}
+			}
 
 			$charge.azuresearch().getAllPlansPost(data).success(function(data)
 			{
@@ -620,10 +703,10 @@
 					$scope.loading = false;
 					$scope.isdataavailable=true;
 
-          if(selectedPlan!="")
-          {
-            selectPlan(selectedPlan);
-          }
+					if(selectedPlan!="")
+					{
+						selectPlan(selectedPlan);
+					}
 
 					if(data.length<take){
 						$scope.isdataavailable=false;
@@ -806,7 +889,7 @@
 							//$scope.features=[];
 							//$scope.addNewRow($scope.features);
 							//$scope.loadAllPriceSchemeFeatures();
-                            //
+							//
 							//$scope.selectedBasePlans=[];
 							//skipBasePlans=0;
 							//$scope.loadingBasePlans = true;
@@ -980,7 +1063,7 @@
 							vm.activePlanPaneIndex = 0;
 							$scope.more($scope.tempEditPlan,"");
 							$scope.cancelEdit();
-              //selectPlan(vm.editSelectedPlan);
+							//selectPlan(vm.editSelectedPlan);
 							//$window.location.href='#/paymentlist';
 						}
 						else if(data.response=="failed")
@@ -1117,17 +1200,17 @@
 		//	//debugger;
 		//	return null;
 		//}
-    $scope.baseUrl="";
-    $http.get('app/core/cloudcharge/js/config.json').then(function(data){
+		$scope.baseUrl="";
+		$http.get('app/core/cloudcharge/js/config.json').then(function(data){
 
-      //console.log(data);
-      $scope.baseUrl=data.data["plan"]["domain"];
-      //$scope.loadFilterCategories('dashBoardReport.mrt');
-      $scope.baseUrl=$scope.baseUrl.split('/')[2];
-    }, function(errorResponse){
-      //console.log(errorResponse);
-      $scope.baseUrl="";
-    });
+			//console.log(data);
+			$scope.baseUrl=data.data["plan"]["domain"];
+			//$scope.loadFilterCategories('dashBoardReport.mrt');
+			$scope.baseUrl=$scope.baseUrl.split('/')[2];
+		}, function(errorResponse){
+			//console.log(errorResponse);
+			$scope.baseUrl="";
+		});
 
 		function getSecurityToken() {
 			var _st = gst("SubscriptionKey");
