@@ -1,9 +1,9 @@
 ////////////////////////////////
 // App : BulkUpload
 // Owner  : Gihan Herath
-// Last changed date : 2017/09/07
-// Version : 6.1.0.2
-// Modified By : Gihan
+// Last changed date : 2018/02/12
+// Version : 6.1.0.3
+// Modified By : Kasun
 /////////////////////////////////
 
 (function ()
