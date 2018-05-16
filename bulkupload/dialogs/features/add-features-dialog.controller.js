@@ -29,8 +29,8 @@
     vm.featureType='';
     $scope.setFeature = function (row, type) {
       // row.advancedFeaturesConfirmed = true;
-		vm.featuresInit = false;
-		vm.showAdvanceFeatures=true;
+	vm.featuresInit = false;
+	vm.showAdvanceFeatures=true;
       type == 'FIXED' ? row.type = 'FIXED' : row.type='SLAB';
       type == 'FIXED' ? vm.featureType = 'FIXED' : vm.featureType='SLAB';
       var elem = document.getElementsByClassName('content-wrapper')[0];
